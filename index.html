@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Theme Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+    <h1 class="text-3xl font-bold mb-6">Gradient Theme Generator</h1>
+    
+    <div class="flex gap-4 mb-4">
+        <div>
+            <input type="color" id="color1" value="#ff0000" class="w-12 h-12 rounded-full border-2 border-white">
+            <input type="text" id="hex1" value="#ff0000" class="text-black p-1 rounded-lg w-20 text-center">
+        </div>
+        <div>
+            <input type="color" id="color2" value="#0000ff" class="w-12 h-12 rounded-full border-2 border-white">
+            <input type="text" id="hex2" value="#0000ff" class="text-black p-1 rounded-lg w-20 text-center">
+        </div>
+        <div>
+            <input type="color" id="color3" value="#00ff00" class="w-12 h-12 rounded-full border-2 border-white">
+            <input type="text" id="hex3" value="#00ff00" class="text-black p-1 rounded-lg w-20 text-center">
+        </div>
+    </div>
+    
+    <select id="gradientType" class="mb-4 px-4 py-2 bg-gray-800 text-white rounded-lg">
+        <option value="to right">Left to Right</option>
+        <option value="to bottom">Top to Bottom</option>
+        <option value="to top right">Diagonal</option>
+        <option value="to bottom left">Reverse Diagonal</option>
+        <option value="radial">Radial</option>
+        <option value="conic">Conic</option>
+    </select>
+    
+    <div id="gradientBox" class="w-80 h-40 rounded-lg shadow-lg mb-4 transition-all duration-1000"></div>
+    
+    <button id="generateBtn" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow-md">Generate Gradient</button>
+    <p id="cssCode" class="mt-4 text-sm bg-gray-800 p-2 rounded w-80 text-center"></p>
+    <button id="copyBtn" class="mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow-md">Copy CSS</button>
+    
+    <script>
+        const gradientBox = document.getElementById('gradientBox');
+        const generateBtn = document.getElementById('generateBtn');
+        const cssCode = document.getElementById('cssCode');
+        const copyBtn = document.getElementById('copyBtn');
+        const color1 = document.getElementById('color1');
+        const color2 = document.getElementById('color2');
+        const color3 = document.getElementById('color3');
+        const hex1 = document.getElementById('hex1');
+        const hex2 = document.getElementById('hex2');
+        const hex3 = document.getElementById('hex3');
+        const gradientType = document.getElementById('gradientType');
+
+        function generateGradient() {
+            const gradient = `${gradientType.value}, ${hex1.value}, ${hex2.value}, ${hex3.value}`;
+            const gradientStyle = gradientType.value === 'conic' ? `conic-gradient(${gradient})` : `linear-gradient(${gradient})`;
+            gradientBox.style.background = gradientStyle;
+            gradientBox.style.transition = "background 1s ease-in-out";
+            cssCode.textContent = `background: ${gradientStyle};`;
+        }
+
+        function syncColorInputs(colorInput, hexInput) {
+            colorInput.addEventListener('input', () => {
+                hexInput.value = colorInput.value;
+                generateGradient();
+            });
+            hexInput.addEventListener('input', () => {
+                if (/^#[0-9A-F]{6}$/i.test(hexInput.value)) {
+                    colorInput.value = hexInput.value;
+                    generateGradient();
+                }
+            });
+        }
+
+        syncColorInputs(color1, hex1);
+        syncColorInputs(color2, hex2);
+        syncColorInputs(color3, hex3);
+
+        generateBtn.addEventListener('click', generateGradient);
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(cssCode.textContent);
+            alert('CSS copied to clipboard!');
+        });
+
+        generateGradient();
+    </script>
+</body>
+</html>
